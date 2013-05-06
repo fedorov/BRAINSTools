@@ -26,6 +26,10 @@
 #include <cstring>
 #include <map>
 
+#include "itkLandmarkBasedTransformInitializer.h"
+#include "itkCastImageFilter.h"
+#include <BRAINSFitHelper.h>
+
 class BRAINSConstellationDetectorPrimary
 {
 public:
@@ -132,6 +136,21 @@ public:
   void SetVerbose(bool verbose)
   {
     this->m_verbose = verbose;
+  }
+
+  void SetAtlasVolume ( std::string atlasVolume ) 
+  {
+    this->m_atlasVolume = atlasVolume ;
+  }
+
+  void SetAtlasLandmarks ( std::string atlasLandmarks ) 
+  {
+    this->m_atlasLandmarks = atlasLandmarks ;
+  }
+
+  void SetAtlasLandmarkWeights ( std::string atlasLandmarkWeights ) 
+  {
+    this->m_atlasLandmarkWeights = atlasLandmarkWeights ;
   }
 
   void SetInputTemplateModel(std::string inputTemplateModel)
@@ -305,6 +324,9 @@ private:
   std::string m_writeBranded2DImage;
   std::string m_backgroundFillValueString;
   std::string m_interpolationMode;
+  std::string m_atlasVolume ;
+  std::string m_atlasLandmarks ;
+  std::string m_atlasLandmarkWeights ;
 
   std::vector<int> m_rescaleIntensitiesOutputRange;   // default = [40,4000]
 
