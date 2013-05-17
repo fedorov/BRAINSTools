@@ -1,4 +1,7 @@
 ##- project(BRAINSConstellationDetector)
+
+ERROROR
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #
