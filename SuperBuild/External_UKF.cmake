@@ -7,7 +7,7 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 set(proj UKF)
 set(${proj}_GIT_REPOSITORY "git://github.com/BRAINSia/ukftractography.git")
-set(${proj}_GIT_TAG "e86c505a891bf8cc35bdeb580a07226f65d7ab08")
+set(${proj}_GIT_TAG "FirstPassGeneralizeBuild")
 
 set(${proj}_DEPENDENCIES ${ITK_EXTERNAL_NAME} teem Boost SlicerExecutionModel )
 
@@ -33,6 +33,10 @@ ExternalProject_Add(${proj}
   -DBUILD_EXAMPLES:BOOL=OFF
   -DBUILD_TESTING:BOOL=OFF
   -DUKF_SUPERBUILD:BOOL=OFF
+  -DTeem_DIR:PATH=${Teem_DIR}
+  -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
+  -DSlicer_SOURCE_DIR:BOOL=ON ## THIS is a hack to prevent looking for slicer
+  -DUKFTractography_SuperBuild:BOOL=ON ## THIS should be the single flag
   ${${proj}_CMAKE_OPTIONS}
   INSTALL_COMMAND ""
   DEPENDS
