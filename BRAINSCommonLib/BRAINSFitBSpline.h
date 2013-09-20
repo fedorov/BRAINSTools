@@ -75,6 +75,11 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   typedef typename LBFGSBOptimizerType::BoundSelectionType OptimizerBoundSelectionType;
   typedef typename LBFGSBOptimizerType::BoundValueType     OptimizerBoundValueType;
 
+  typedef typename itk::RegularStepGradientDescentOptimizer         RSGDOptimizerType;
+  typedef typename RSGDOptimizerType::Pointer              RSGDOptimizerTypePointer;
+  typedef typename RSGDOptimizerType::ParametersType       RSGDOptimizerParameterType;
+  typedef typename RSGDOptimizerType::ScalesType           RSGDOptimizerScalesType;
+
   typedef typename InterpolatorType::Pointer InterpolatorTypePointer;
   typedef typename RegistrationType::Pointer RegistrationTypePointer;
 
@@ -98,7 +103,18 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   RegistrationTypePointer registration = RegistrationType::New();
   registration->SetMetric(CostMetricObject);
   LBFGSBOptimizerTypePointer LBFGSBoptimizer = LBFGSBOptimizerType::New();
-  registration->SetOptimizer(LBFGSBoptimizer);
+  //registration->SetOptimizer(LBFGSBoptimizer);
+
+  RSGDOptimizerTypePointer RSGDoptimizer = RSGDOptimizerType::New();
+  RSGDOptimizerScalesType RSGDscales(m_OutputBSplineTransform->GetParameters().GetSize());
+  RSGDscales.Fill(1.);
+  registration->SetOptimizer(RSGDoptimizer);
+  RSGDoptimizer->SetMinimumStepLength(0.01);
+  RSGDoptimizer->SetMaximumStepLength(5.);
+  RSGDoptimizer->SetRelaxationFactor(0.5);
+  RSGDoptimizer->SetNumberOfIterations(m_MaximumNumberOfIterations);
+  RSGDoptimizer->SetScales(RSGDscales);
+
   InterpolatorTypePointer interpolator = InterpolatorType::New();
   registration->SetInterpolator(interpolator);
   registration->SetTransform(m_OutputBSplineTransform);
@@ -161,17 +177,18 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   const bool ObserveIterations = true;
   if( ObserveIterations == true )
     {
-    typedef BRAINSFit::CommandIterationUpdate<LBFGSBOptimizerType, BSplineTransformType, RegisterImageType>
+    typedef BRAINSFit::CommandIterationUpdate<RSGDOptimizerType, BSplineTransformType, RegisterImageType>
       CommandIterationUpdateType;
     typename CommandIterationUpdateType::Pointer observer =
       CommandIterationUpdateType::New();
     observer->SetDisplayDeformedImage(m_DisplayDeformedImage);
     observer->SetPromptUserAfterDisplay(m_PromptUserAfterDisplay);
-    observer->SetPrintParameters(false);
+    observer->SetPrintParameters(true);
     observer->SetMovingImage(m_MovingVolume);
     observer->SetFixedImage(m_FixedVolume);
     observer->SetTransform(m_OutputBSplineTransform);
-    LBFGSBoptimizer->AddObserver(itk::IterationEvent(), observer);
+    //LBFGSBoptimizer->AddObserver(itk::IterationEvent(), observer);
+    RSGDoptimizer->AddObserver(itk::IterationEvent(), observer);
     }
 
   /* Now start the execute function */

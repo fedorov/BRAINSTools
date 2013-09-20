@@ -236,7 +236,7 @@ public:
       std::cout << std::setw( 10 ) << std::setfill( ' ' ) << optimizer->GetValue() << "   ";
       if( parmsNonEmpty )
         {
-        std::cout << parms;
+        //std::cout << parms;
         }
       std::cout << std::endl;
       }
